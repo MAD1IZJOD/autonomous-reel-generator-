@@ -105,6 +105,22 @@ The founder's email supplies measured observations from the existing system. Tho
 
 These are observations from one environment, not vendor benchmarks. They must be independently reproduced. The documents distinguish **tested**, **rejected**, **proposed** and **untested** items; see the [model registry](docs/ai/MODEL_REGISTRY.md) and [model evaluation](docs/ai/MODEL_EVALUATION.md).
 
+## Phase 2 validation and planning documents
+
+The following documents extend the foundation with architecture validation, open-source strategy, environment preparation, GPU provider strategy and the implementation roadmap:
+
+- [Architecture review](docs/architecture/ARCHITECTURE_REVIEW.md)
+- [Component interfaces](docs/architecture/COMPONENT_INTERFACES.md)
+- [Failure recovery](docs/architecture/FAILURE_RECOVERY.md)
+- [Open-source model strategy](docs/ai/OPEN_SOURCE_MODEL_STRATEGY.md)
+- [Model benchmark plan](docs/ai/MODEL_BENCHMARK_PLAN.md)
+- [Open-source dependencies](docs/infrastructure/OPEN_SOURCE_DEPENDENCIES.md)
+- [Development environment](docs/infrastructure/DEVELOPMENT_ENVIRONMENT.md)
+- [GPU provider strategy](docs/infrastructure/GPU_PROVIDER_STRATEGY.md)
+- [Repository acquisition plan](docs/infrastructure/REPOSITORY_ACQUISITION_PLAN.md)
+- [Implementation roadmap](docs/project/IMPLEMENTATION_ROADMAP.md)
+- [Environment setup checklist](docs/project/ENVIRONMENT_SETUP_CHECKLIST.md)
+
 ## Getting started
 
 Nothing is runnable yet. To participate in the foundation phase:
