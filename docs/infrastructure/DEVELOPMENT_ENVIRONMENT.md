@@ -4,7 +4,7 @@
 |---|---|
 | Status | Foundation; setup actions are listed, not executed |
 | Last updated | 2026-11-27 |
-| Related | [Tech stack](TECH_STACK.md), [repository structure](REPOSITORY_STRUCTURE.md), [environment setup checklist](../project/ENVIRONMENT_SETUP_CHECKLIST.md) |
+| Related | [Tech stack](../engineering/TECH_STACK.md), [repository structure](../engineering/REPOSITORY_STRUCTURE.md), [environment setup checklist](../project/ENVIRONMENT_SETUP_CHECKLIST.md) |
 
 ## 1. Development machine
 

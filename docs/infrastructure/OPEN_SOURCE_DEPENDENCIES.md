@@ -4,7 +4,7 @@
 |---|---|
 | Status | Foundation; licences and versions must be verified before production use |
 | Last updated | 2026-11-27 |
-| Related | [Tech stack](TECH_STACK.md), [licensing policy](../ai/LICENSING_POLICY.md), [model registry](../ai/MODEL_REGISTRY.md), [repository acquisition plan](REPOSITORY_ACQUISITION_PLAN.md) |
+| Related | [Tech stack](../engineering/TECH_STACK.md), [licensing policy](../ai/LICENSING_POLICY.md), [model registry](../ai/MODEL_REGISTRY.md), [repository acquisition plan](REPOSITORY_ACQUISITION_PLAN.md) |
 
 ## 1. Purpose
 
