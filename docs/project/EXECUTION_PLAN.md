@@ -154,7 +154,7 @@ Workstreams:
 
 Exit criteria:
 
-- All P0 capabilities in [MVP_SCOPE.md](MVP_SCOPE.md) are implemented and tested.
+- All P0 capabilities in [MVP_SCOPE.md](../product/MVP_SCOPE.md) are implemented and tested.
 - The MVP acceptance criteria are met.
 - A real 60-second short is produced through the product and accepted by the founder.
 
