@@ -360,6 +360,8 @@ class QCReport(Base):
     run_id: Mapped[str] = mapped_column(ForeignKey("workflow_runs.id", ondelete="CASCADE"), nullable=False)
     asset_version_id: Mapped[str | None] = mapped_column(ForeignKey("asset_versions.id", ondelete="CASCADE"))
     stage_id: Mapped[str | None] = mapped_column(String(64))
+
+    asset_version: Mapped["AssetVersion | None"] = relationship(back_populates="qc_reports")
     shot_id: Mapped[str | None] = mapped_column(ForeignKey("shots.id", ondelete="SET NULL"))
     metric: Mapped[str] = mapped_column(String(120), nullable=False)
     value: Mapped[float | None] = mapped_column(Float)
