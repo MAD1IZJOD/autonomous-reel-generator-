@@ -164,20 +164,6 @@ class PipelineService:
             )
             session.add(shot)
         session.flush()
-        self.cost.record(
-            session,
-            run_id="",
-            stage_id="plates.plan",
-            shot_id=None,
-            provider="mock",
-            model_id=decision.selected_model_id,
-            kind="plan",
-            estimated_usd=0.0,
-            actual_usd=0.0,
-            units=len(sheet_data["plates"]),
-            unit_name="plate",
-            meta={"note": "mock fixture"},
-        )
         return plate_sheet
 
     def approve_plate_sheet(self, session: Session, *, plate_sheet_id: str, actor: str, role: str, comment: str | None = None) -> Approval:
