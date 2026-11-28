@@ -128,7 +128,6 @@ class Shot(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     plate_sheet: Mapped[PlateSheet] = relationship(back_populates="shots")
-    asset_versions: Mapped[list["AssetVersion"]] = relationship(back_populates="shot")
 
     __table_args__ = (UniqueConstraint("plate_sheet_id", "plate_id", name="uq_shot_plate"),)
 
@@ -264,7 +263,6 @@ class AssetVersion(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     asset: Mapped[Asset] = relationship(back_populates="versions")
-    shot: Mapped["Shot | None"] = relationship(back_populates="asset_versions")
     qc_reports: Mapped[list["QCReport"]] = relationship(back_populates="asset_version", cascade="all, delete-orphan")
 
     __table_args__ = (UniqueConstraint("asset_id", "version", name="uq_asset_version"),)
