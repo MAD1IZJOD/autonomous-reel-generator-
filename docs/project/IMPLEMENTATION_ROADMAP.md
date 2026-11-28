@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| Status | Foundation; effort estimates are provisional |
-| Last updated | 2026-11-27 |
-| Related | [Execution plan](EXECUTION_PLAN.md), [milestones](MILESTONES.md), [risks](RISKS.md), [environment setup checklist](ENVIRONMENT_SETUP_CHECKLIST.md) |
+| Status | Milestone 0 in progress; effort estimates are provisional |
+| Last updated | 2026-11-28 |
+| Related | [Execution plan](EXECUTION_PLAN.md), [milestones](MILESTONES.md), [risks](RISKS.md), [environment setup checklist](ENVIRONMENT_SETUP_CHECKLIST.md), [discovery documents](../discovery/EXISTING_WORKFLOW.md) |
 
 ## 1. Purpose
 
@@ -14,15 +14,37 @@ Effort is expressed in engineering-weeks and is provisional until the code audit
 
 ## 2. Roadmap
 
-### Milestone 0 — Discovery and code audit
+### Milestone 0 – Discovery and code audit
 
+- **Status:** in progress. The discovery package is drafted from the founder's written account; the code and licence audit is blocked on founder materials.
 - **Objective:** understand the existing system and its licences.
 - **Deliverables:** audit report, dependency map, licence review, gap list.
 - **Dependencies:** founder artifacts.
-- **Effort:** 1–2 engineering-weeks.
+- **Effort:** 1–2 engineering-weeks after materials are received; the documentation portion is complete.
 - **Acceptance:** reproduction requirements and costs are known; every component has a licence status.
 - **Testing:** none (documentation and audit).
 - **Risks:** missing artifacts, undocumented steps, licence surprises.
+
+**Work products:**
+
+| Document | Purpose | Status |
+|---|---|---|
+| [EXISTING_WORKFLOW.md](../discovery/EXISTING_WORKFLOW.md) | Stage-by-stage reconstruction with evidence labels | Drafted |
+| [WORKFLOW_DEPENDENCY_GRAPH.md](../discovery/WORKFLOW_DEPENDENCY_GRAPH.md) | Artifact, execution and resource dependencies | Drafted |
+| [FOUNDER_MATERIALS_CHECKLIST.md](../discovery/FOUNDER_MATERIALS_CHECKLIST.md) | Exact artifacts required to close the milestone | Open request |
+| [BASELINE_REPRODUCTION_PLAN.md](../discovery/BASELINE_REPRODUCTION_PLAN.md) | Controlled experiment for Milestone 1 | Planned |
+| [UNKNOWN_CONFIGURATIONS.md](../discovery/UNKNOWN_CONFIGURATIONS.md) | Register of unverified settings and licences | Open |
+| [ARCHITECTURE_TRACEABILITY.md](../discovery/ARCHITECTURE_TRACEABILITY.md) | Stage-to-component mapping and integration strategy | Drafted |
+
+**Remaining exit criteria:**
+
+- Inspect the founder's scripts, skill files, ComfyUI workflows and plate sheets.
+- Verify every model, tool and asset licence.
+- Replace inferred configurations with inspected ones.
+- Confirm the reproduction cost and access constraints.
+- Decide wrap, port, replace or rehost per component with evidence.
+
+Milestone 0 is not complete while the materials checklist has unresolved P0 items.
 
 ### Milestone 1 — Reference reproduction
 
@@ -33,6 +55,7 @@ Effort is expressed in engineering-weeks and is provisional until the code audit
 - **Acceptance:** AC-REP-001 through AC-REP-010.
 - **Testing:** QC measurement, cost reconciliation, repeat-run comparison.
 - **Risks:** reproduction variance, cost overrun, quality mismatch.
+- **Plan:** [BASELINE_REPRODUCTION_PLAN.md](../discovery/BASELINE_REPRODUCTION_PLAN.md).
 
 ### Milestone 2 — Standalone execution foundation
 
