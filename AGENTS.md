@@ -16,7 +16,18 @@ If documents conflict, stop and resolve the conflict in the documents before wri
 
 ## 2. Current phase
 
-The repository is in the **foundation phase**. Application code, dependency installation and service scaffolding are intentionally absent. Do not start Milestone 2 implementation until Milestone 0 (discovery and code audit) and Milestone 1 (reference reproduction) have produced the artifacts described in `docs/project/MILESTONES.md`.
+The repository is in **Phase 4: independent implementation and execution foundation**. Application code, dependency installation and service scaffolding are now permitted.
+
+The founder's original scripts and media are not available. Implementation proceeds from the written technical specification under [ADR-006](docs/architecture/decisions/ADR-006-independent-implementation.md) and [the Phase 4 plan](docs/implementation/PHASE4_IMPLEMENTATION_PLAN.md).
+
+Rules for this phase:
+
+- Build independent equivalents; do not wait for founder artifacts.
+- Use deterministic mock providers and synthetic fixtures for the first vertical slice.
+- Do not make paid provider calls, provision GPUs or download model weights.
+- Label mock media as a fixture wherever it is stored or displayed.
+- Do not claim reproduction of the founder's creative quality from mocked output.
+- Keep the [unknown register](docs/discovery/UNKNOWN_CONFIGURATIONS.md) current; a setting in code is not a verified production setting.
 
 ## 3. Non-negotiable engineering rules
 
