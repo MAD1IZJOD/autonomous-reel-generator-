@@ -43,7 +43,14 @@ Proof must be visible, not decorative.
         run_id = run.id
 
     def run_worker_until(predicate, limit: int = 10000) -> None:
+        last = None
         for _ in range(limit):
+            status = _run_status(session_factory, run_id)
+            if status != last:
+                print(f"[demo] run status: {status}", flush=True)
+                last = status
+            if status in {"failed", "cancelled"}:
+                raise RuntimeError(f"run {run_id} ended as {status}: {_run_error(session_factory, run_id)}")
             if predicate():
                 return
             if not worker.run_once():
@@ -75,6 +82,16 @@ def _run_status(session_factory, run_id: str) -> str:
 
         run = session.get(WorkflowRun, run_id)
         return run.status if run is not None else "missing"
+
+
+def _run_error(session_factory, run_id: str) -> str:
+    with session_scope(session_factory) as session:
+        from arg.models import WorkflowRun
+
+        run = session.get(WorkflowRun, run_id)
+        if run is None:
+            return "run missing"
+        return f"{run.error_code}: {run.error_message}"
 
 
 def _latest_render(session, run_id: str):
