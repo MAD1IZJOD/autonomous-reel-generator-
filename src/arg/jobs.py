@@ -131,6 +131,48 @@ class JobEngine:
             job.heartbeat_at = now
             job.lease_expires_at = now + timedelta(seconds=extend)
 
+    def complete_session(
+        self,
+        session: Session,
+        job_id: str,
+        lease_token: str,
+        *,
+        outcome: JobOutcome,
+        output: dict | None = None,
+        error_code: str | None = None,
+        error_message: str | None = None,
+    ) -> Job:
+        job = session.get(Job, job_id)
+        if job is None:
+            raise ValueError("job not found")
+        if job.lease_token != lease_token:
+            raise StaleLeaseError("stale lease token")
+        if job.status in {JobStatus.SUCCEEDED.value, JobStatus.FAILED.value, JobStatus.CANCELLED.value}:
+            return job
+        job.status = outcome.value
+        if outcome == JobOutcome.SUCCEEDED:
+            job.error_code = None
+            job.error_message = None
+        else:
+            job.error_code = error_code
+            job.error_message = error_message
+        job.lease_token = None
+        job.worker_id = None
+        job.lease_expires_at = None
+        attempt = (
+            session.query(JobAttempt)
+            .filter(JobAttempt.job_id == job_id, JobAttempt.lease_token == lease_token)
+            .one_or_none()
+        )
+        if attempt is not None:
+            attempt.outcome = outcome.value
+            attempt.error_code = error_code
+            attempt.detail = error_message
+            attempt.finished_at = self._now()
+            attempt.heartbeat_at = self._now()
+        session.flush()
+        return job
+
     def complete(
         self,
         job_id: str,
@@ -142,36 +184,59 @@ class JobEngine:
         error_message: str | None = None,
     ) -> Job:
         with session_scope(self.session_factory) as session:
-            job = session.get(Job, job_id)
-            if job is None:
-                raise ValueError("job not found")
-            if job.lease_token != lease_token:
-                raise StaleLeaseError("stale lease token")
-            if job.status in {JobStatus.SUCCEEDED.value, JobStatus.FAILED.value, JobStatus.CANCELLED.value}:
-                return job
-            job.status = outcome.value
-            if outcome == JobOutcome.SUCCEEDED:
-                job.error_code = None
-                job.error_message = None
-            else:
-                job.error_code = error_code
-                job.error_message = error_message
+            return self.complete_session(
+                session,
+                job_id,
+                lease_token,
+                outcome=outcome,
+                output=output,
+                error_code=error_code,
+                error_message=error_message,
+            )
+
+    def fail_session(
+        self,
+        session: Session,
+        job_id: str,
+        lease_token: str,
+        *,
+        error_code: str,
+        error_message: str,
+        retryable: bool,
+    ) -> Job:
+        job = session.get(Job, job_id)
+        if job is None:
+            raise ValueError("job not found")
+        if job.lease_token != lease_token:
+            raise StaleLeaseError("stale lease token")
+        attempt = (
+            session.query(JobAttempt)
+            .filter(JobAttempt.job_id == job_id, JobAttempt.lease_token == lease_token)
+            .one_or_none()
+        )
+        if attempt is not None:
+            attempt.outcome = JobStatus.FAILED.value
+            attempt.error_code = error_code
+            attempt.detail = error_message
+            attempt.finished_at = self._now()
+        if retryable and job.attempts < job.max_attempts:
+            job.status = JobStatus.RETRYABLE.value
+            job.available_at = self._now() + timedelta(seconds=min(300, 2 ** job.attempts))
+            job.error_code = error_code
+            job.error_message = error_message
             job.lease_token = None
             job.worker_id = None
             job.lease_expires_at = None
-            attempt = (
-                session.query(JobAttempt)
-                .filter(JobAttempt.job_id == job_id, JobAttempt.lease_token == lease_token)
-                .one_or_none()
-            )
-            if attempt is not None:
-                attempt.outcome = outcome.value
-                attempt.error_code = error_code
-                attempt.detail = error_message
-                attempt.finished_at = self._now()
-                attempt.heartbeat_at = self._now()
-            session.flush()
-            return job
+            job.status = JobStatus.QUEUED.value
+        else:
+            job.status = JobStatus.FAILED.value
+            job.error_code = error_code
+            job.error_message = error_message
+            job.lease_token = None
+            job.worker_id = None
+            job.lease_expires_at = None
+        session.flush()
+        return job
 
     def fail(
         self,
@@ -183,40 +248,14 @@ class JobEngine:
         retryable: bool,
     ) -> Job:
         with session_scope(self.session_factory) as session:
-            job = session.get(Job, job_id)
-            if job is None:
-                raise ValueError("job not found")
-            if job.lease_token != lease_token:
-                raise StaleLeaseError("stale lease token")
-            attempt = (
-                session.query(JobAttempt)
-                .filter(JobAttempt.job_id == job_id, JobAttempt.lease_token == lease_token)
-                .one_or_none()
+            return self.fail_session(
+                session,
+                job_id,
+                lease_token,
+                error_code=error_code,
+                error_message=error_message,
+                retryable=retryable,
             )
-            if attempt is not None:
-                attempt.outcome = JobStatus.FAILED.value
-                attempt.error_code = error_code
-                attempt.detail = error_message
-                attempt.finished_at = self._now()
-            if retryable and job.attempts < job.max_attempts:
-                job.status = JobStatus.RETRYABLE.value
-                job.available_at = self._now() + timedelta(seconds=min(300, 2 ** job.attempts))
-                job.error_code = error_code
-                job.error_message = error_message
-                job.lease_token = None
-                job.worker_id = None
-                job.lease_expires_at = None
-                # Move retryable jobs back to queued after backoff; for the first slice, queue immediately.
-                job.status = JobStatus.QUEUED.value
-            else:
-                job.status = JobStatus.FAILED.value
-                job.error_code = error_code
-                job.error_message = error_message
-                job.lease_token = None
-                job.worker_id = None
-                job.lease_expires_at = None
-            session.flush()
-            return job
 
     def cancel_run(self, session: Session, run_id: str) -> None:
         run = session.get(WorkflowRun, run_id)
