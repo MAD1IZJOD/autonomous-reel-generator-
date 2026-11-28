@@ -35,6 +35,7 @@ from arg.models import (
     Approval,
     Asset,
     AssetVersion,
+    CostRecord,
     Export,
     PlateSheet,
     Project,
@@ -269,12 +270,12 @@ class PipelineService:
             run = session.get(WorkflowRun, job.run_id)
             stage = session.query(WorkflowStage).filter_by(run_id=job.run_id, stage_id=job.stage_id).one_or_none()
             if run is None or stage is None:
-                self.job_engine.fail(job.id, claimed.lease_token, error_code="INT_MISSING_RUN", error_message="run or stage not found", retryable=False)
+                self.job_engine.fail_session(session, job.id, claimed.lease_token, error_code="INT_MISSING_RUN", error_message="run or stage not found", retryable=False)
                 return
             try:
                 result = self._dispatch_stage(session, run, stage, claimed)
             except Exception as exc:  # noqa: BLE001
-                self.job_engine.fail(job.id, claimed.lease_token, error_code="INT_STAGE_ERROR", error_message=str(exc), retryable=False)
+                self.job_engine.fail_session(session, job.id, claimed.lease_token, error_code="INT_STAGE_ERROR", error_message=str(exc), retryable=False)
                 run.status = "failed"
                 run.error_code = "INT_STAGE_ERROR"
                 run.error_message = str(exc)
@@ -285,13 +286,13 @@ class PipelineService:
                 return
 
             if result.get("waiting_approval"):
-                job_status = self.job_engine.complete(job.id, claimed.lease_token, outcome=__import__("arg.domain", fromlist=["JobOutcome"]).JobOutcome.WAITING_APPROVAL)
+                job_status = self.job_engine.complete_session(session, job.id, claimed.lease_token, outcome=__import__("arg.domain", fromlist=["JobOutcome"]).JobOutcome.WAITING_APPROVAL)
                 stage.status = "waiting_approval"
                 run.status = "waiting_approval"
                 session.flush()
                 return
 
-            self.job_engine.complete(job.id, claimed.lease_token, outcome=__import__("arg.domain", fromlist=["JobOutcome"]).JobOutcome.SUCCEEDED, output=result)
+            self.job_engine.complete_session(session, job.id, claimed.lease_token, outcome=__import__("arg.domain", fromlist=["JobOutcome"]).JobOutcome.SUCCEEDED, output=result)
             stage.status = "succeeded"
             stage.output_json = result
             stage.finished_at = utcnow()
