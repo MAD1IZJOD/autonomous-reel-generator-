@@ -37,9 +37,13 @@ def frame_rate(path: Path | str, ffprobe_bin: str = "ffprobe") -> float:
     data = probe(path, ffprobe_bin)
     for stream in data.get("streams", []):
         if stream.get("codec_type") == "video":
-            rate = stream.get("avg_frame_rate") or stream.get("r_frame_rate")
-            if rate and rate != "0/0":
+            for key in ("avg_frame_rate", "r_frame_rate"):
+                rate = stream.get(key)
+                if not rate or rate == "0/0":
+                    continue
                 numerator, denominator = rate.split("/")
+                if float(denominator) == 0:
+                    continue
                 return float(numerator) / float(denominator)
     raise ValueError("no video stream found")
 
@@ -109,17 +113,40 @@ def concatenate_videos(
     fps: int = 25,
     width: int = 1080,
     height: int = 1920,
+    durations: list[float] | None = None,
     ffmpeg_bin: str = "ffmpeg",
 ) -> Path:
+    """Concatenate clips onto an exact timeline.
+
+    Each clip is scaled, padded, retimed and conformed to its planned duration so
+    the visual track matches the voice-driven timeline instead of inheriting
+    whatever length the provider happened to return.
+    """
     if not video_paths:
         raise ValueError("no videos to concatenate")
+    if durations is not None and len(durations) != len(video_paths):
+        raise ValueError("durations must match the number of video paths")
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
     command = [ffmpeg_bin, "-y"]
     for path in video_paths:
         command += ["-i", str(path)]
-    filter_inputs = "".join(f"[{index}:v]" for index in range(len(video_paths)))
-    filter_complex = f"{filter_inputs}concat=n={len(video_paths)}:v=1:a=0[v]"
+
+    chains = []
+    concat_inputs = ""
+    for index, _ in enumerate(video_paths):
+        chain = (
+            f"[{index}:v]scale={width}:{height}:force_original_aspect_ratio=decrease,"
+            f"pad={width}:{height}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps={fps}"
+        )
+        if durations is not None:
+            duration = max(0.04, round(float(durations[index]), 3))
+            chain += f",tpad=stop_mode=clone:stop_duration={duration:.3f},trim=duration={duration:.3f}"
+        chain += f",setpts=PTS-STARTPTS[v{index}]"
+        chains.append(chain)
+        concat_inputs += f"[v{index}]"
+
+    filter_complex = ";".join(chains) + f";{concat_inputs}concat=n={len(video_paths)}:v=1:a=0[v]"
     command += [
         "-filter_complex",
         filter_complex,
@@ -127,8 +154,6 @@ def concatenate_videos(
         "[v]",
         "-r",
         str(fps),
-        "-vf",
-        f"scale={width}:{height},format=yuv420p",
         "-c:v",
         "libx264",
         "-pix_fmt",
@@ -290,11 +315,12 @@ def qc_loudness(path: Path | str, ffmpeg_bin: str = "ffmpeg") -> dict[str, float
     command = [ffmpeg_bin, "-i", str(path), "-af", "ebur128=peak=true", "-f", "null", "-"]
     result = subprocess.run(command, capture_output=True, text=True)
     text = result.stderr
-    loudness_match = re.search(r"I:\s*(-?\d+(?:\.\d+)?)\s*LUFS", text)
-    peak_match = re.search(r"Peak:\s*(-?\d+(?:\.\d+)?)\s*dBFS", text)
+    # ebur128 prints a running value before the final summary, so take the last match.
+    loudness_matches = re.findall(r"I:\s*(-?\d+(?:\.\d+)?)\s*LUFS", text)
+    peak_matches = re.findall(r"Peak:\s*(-?\d+(?:\.\d+)?)\s*dBFS", text)
     return {
-        "integrated_lufs": float(loudness_match.group(1)) if loudness_match else None,
-        "true_peak_dbfs": float(peak_match.group(1)) if peak_match else None,
+        "integrated_lufs": float(loudness_matches[-1]) if loudness_matches else None,
+        "true_peak_dbfs": float(peak_matches[-1]) if peak_matches else None,
     }
 
 
