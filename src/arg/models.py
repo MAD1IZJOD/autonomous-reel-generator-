@@ -350,6 +350,8 @@ class CostRecord(Base):
     meta: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
+    run: Mapped["WorkflowRun"] = relationship(back_populates="cost_entries")
+
 
 class QCReport(Base):
     __tablename__ = "qc_reports"
@@ -377,6 +379,8 @@ class Export(Base):
     status: Mapped[str] = mapped_column(String(32), default="created")
     manifest: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    run: Mapped["WorkflowRun"] = relationship(back_populates="exports")
 
 
 class AuditEvent(Base):
