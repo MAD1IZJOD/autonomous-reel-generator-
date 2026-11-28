@@ -50,7 +50,11 @@ Proof must be visible, not decorative.
                 time.sleep(settings.job_poll_seconds)
                 continue
 
-    # Process until the human review gate.
+    # Approve the plan gate created by the run.
+    with session_scope(session_factory) as session:
+        pipeline.approve_gate(session, run_id=run_id, gate="plates.approve", actor="founder", role="reviewer", decision="approved", comment="Approved for demo")
+
+    # Process until the final human review gate.
     run_worker_until(lambda: _run_status(session_factory, run_id) == "waiting_approval")
     with session_scope(session_factory) as session:
         pipeline.approve_gate(session, run_id=run_id, gate="review.human", actor="founder", role="reviewer", decision="approved", comment="Demo approval")
