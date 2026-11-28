@@ -861,6 +861,7 @@ class PipelineService:
             fps=self.settings.render_fps,
             width=self.settings.render_width,
             height=self.settings.render_height,
+            durations=[shot.duration_s for shot in shots],
             ffmpeg_bin=self.settings.ffmpeg_bin,
         )
         audio_version = self._latest_asset_version(session, run.id, None, "audio.mix")
