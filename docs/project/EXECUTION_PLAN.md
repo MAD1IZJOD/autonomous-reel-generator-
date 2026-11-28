@@ -12,7 +12,8 @@ This plan converts the product requirements and architecture decisions into an o
 
 ## 2. Working rules
 
-- No application code is written until Milestone 0 and Milestone 1 produce their artifacts.
+- Phase 4 implementation proceeds independently of the unavailable founder scripts, as decided in [ADR-006](../architecture/decisions/ADR-006-independent-implementation.md). The reference reproduction remains a later validation activity, not a coding precondition.
+- Mock providers and synthetic fixtures must be labelled; they validate architecture and media plumbing, not creative quality.
 - Each milestone has explicit exit criteria and evidence requirements.
 - A milestone is not complete because work was performed; it is complete when its evidence exists.
 - Scope changes go through the open-questions and ADR process.
@@ -203,7 +204,7 @@ Phase 4 depends on Phase 1 evidence and Phase 0 licence review, not only on Phas
 
 ## 12. Immediate next action
 
-Begin Milestone 0 by requesting the founder's existing artifacts and scheduling the code audit. Do not scaffold application code until the audit report exists.
+Execute the Phase 4 plan in [docs/implementation/PHASE4_IMPLEMENTATION_PLAN.md](../implementation/PHASE4_IMPLEMENTATION_PLAN.md): build the execution foundation and prove it with the mocked explainer vertical slice. The reference reproduction plan remains available for later validation when representative inputs exist.
 
 ## 13. Open questions
 
