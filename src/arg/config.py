@@ -50,6 +50,7 @@ class Settings(BaseSettings):
     daily_budget_usd: float = Field(default=5.0, ge=0.0)
     require_cost_approval_above_usd: float = Field(default=0.0, ge=0.0)
 
+    worker_role: str = "cpu"
     use_mock_providers: bool = True
     allow_external_provider_data: bool = False
     license_allowlist_strict: bool = True
