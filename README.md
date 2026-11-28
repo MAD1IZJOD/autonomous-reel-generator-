@@ -2,7 +2,7 @@
 
 A production-oriented platform for turning approved scripts into short-form videos through a reproducible, observable and cost-controlled pipeline.
 
-> **Status: foundation phase.** This repository currently contains engineering documentation and architectural decisions only. There is no runnable application, no trained model, and no generated media in this repository. Claims about model quality or infrastructure performance in these documents refer to the founder's measured baseline where explicitly stated; everything else is marked as a target, assumption or open question.
+> **Status: Milestone 0 discovery.** This repository currently contains engineering documentation, architectural decisions and a workflow reconstruction. The founder's scripts and media have not yet been inspected. There is no runnable application, no trained model, and no generated media in this repository. Claims about model quality or infrastructure performance in these documents refer to the founder's measured baseline where explicitly stated; everything else is marked as a target, assumption or open question.
 
 ## What this project is
 
@@ -92,6 +92,7 @@ The reasoning, rejected alternatives and consequences are recorded in [ADR-001](
 | AI | [Model registry](docs/ai/MODEL_REGISTRY.md), [model routing](docs/ai/MODEL_ROUTING.md), [model evaluation](docs/ai/MODEL_EVALUATION.md), [licensing policy](docs/ai/LICENSING_POLICY.md), [quality gates](docs/ai/QUALITY_GATES.md), [provider abstraction](docs/ai/PROVIDER_ABSTRACTION.md) |
 | Infrastructure | [GPU orchestration](docs/infrastructure/GPU_ORCHESTRATION.md), [cost optimization](docs/infrastructure/COST_OPTIMIZATION.md), [deployment](docs/infrastructure/DEPLOYMENT.md), [security](docs/infrastructure/SECURITY.md), [data retention](docs/infrastructure/DATA_RETENTION.md) |
 | Project | [Execution plan](docs/project/EXECUTION_PLAN.md), [milestones](docs/project/MILESTONES.md), [risks](docs/project/RISKS.md), [open questions](docs/project/OPEN_QUESTIONS.md), [progress](docs/project/PROGRESS.md) |
+| Discovery | [Existing workflow](docs/discovery/EXISTING_WORKFLOW.md), [dependency graph](docs/discovery/WORKFLOW_DEPENDENCY_GRAPH.md), [founder materials](docs/discovery/FOUNDER_MATERIALS_CHECKLIST.md), [baseline reproduction](docs/discovery/BASELINE_REPRODUCTION_PLAN.md), [unknown configurations](docs/discovery/UNKNOWN_CONFIGURATIONS.md), [architecture traceability](docs/discovery/ARCHITECTURE_TRACEABILITY.md) |
 
 ## Baseline facts versus targets
 
@@ -120,6 +121,17 @@ The following documents extend the foundation with architecture validation, open
 - [Repository acquisition plan](docs/infrastructure/REPOSITORY_ACQUISITION_PLAN.md)
 - [Implementation roadmap](docs/project/IMPLEMENTATION_ROADMAP.md)
 - [Environment setup checklist](docs/project/ENVIRONMENT_SETUP_CHECKLIST.md)
+
+## Milestone 0 discovery documents
+
+Milestone 0 is in progress. The workflow has been reconstructed from the founder's written account; the scripts, models and media have not yet been inspected.
+
+- [Existing workflow](docs/discovery/EXISTING_WORKFLOW.md)
+- [Workflow dependency graph](docs/discovery/WORKFLOW_DEPENDENCY_GRAPH.md)
+- [Founder materials checklist](docs/discovery/FOUNDER_MATERIALS_CHECKLIST.md)
+- [Baseline reproduction plan](docs/discovery/BASELINE_REPRODUCTION_PLAN.md)
+- [Unknown configurations](docs/discovery/UNKNOWN_CONFIGURATIONS.md)
+- [Architecture traceability](docs/discovery/ARCHITECTURE_TRACEABILITY.md)
 
 ## Getting started
 
